@@ -3,35 +3,62 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
 
-// app.use(bodyParser.urlencoded({extended: false}));
-// app.use(bodyParser.json());
+const database = {
+    users: [
+        {
+            id: '123',
+            name: 'John',
+            email: 'john@gmail.com',
+            password: 'cookies',
+            entries: 0,
+            joined: new Date()
+        },
+        {
+            id: '124',
+            name: 'Sally',
+            email: 'sally@gmail.com',
+            password: 'bananas',
+            entries: 0,
+            joined: new Date()
+        }
+    ]
+}
 
-// app.get('/', (req, res) => {
-//     // console.log(req.query)
-//     // req.body
-//     console.log(req.headers);
-//     // req.params
-//     const user = {
-//         name: "John",
-//         age: 5
-//     }
-//     res.send(user);
-// })
+app.get('/', (req, res) => {
+    res.send(database.users);
+})
 
-// app.get('/profile', (req, res) => {
-//     console.log(req.body);
-//     res.send("getting profile")
-// })
+app.post('/signin', (req, res) => {
+    console.log(req.body.email);
+    console.log(req.body.password);
+    if (req.body.email === database.users[0].email &&
+        req.body.password === database.users[0].password) {
+        res.json('success')
+    } else {
+        res.status(400).json('error loggging in');
+    }
+})
 
-// app.post('/profile', (req, res) => {
-//     console.log(req.body);
-//     res.send("posting profile success")
-// })
+app.post('/register', (req, res) => {
+    const {name, email, password} = req.body;
+    database.users.push(
+        {
+        id: '125',
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date(),
+        }
+    )
+    res.json(database.users[database.users.length - 1]);
+})
 
-app.listen(3000);
 
 
 
-
+app.listen(3000, () => {
+    console.log('App is running on 3000');
+})
